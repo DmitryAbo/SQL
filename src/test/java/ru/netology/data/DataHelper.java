@@ -36,4 +36,8 @@ public class DataHelper {
         }
         return userInfo;
     }
+
+    public static String getInvalidVerificationCode() {
+        return String.valueOf((int) (Math.random() * 1000000));
+    }
 }

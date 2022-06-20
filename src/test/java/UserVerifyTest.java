@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.netology.Cleaner.DBCleaner;
+import ru.netology.dataBase.DBUtils;
 import ru.netology.data.DataHelper;
 import ru.netology.page.LoginPage;
 
@@ -20,14 +20,14 @@ public class UserVerifyTest {
 
     @AfterAll
     public static void rollBack() {
-        DBCleaner.cleanDB();
+        DBUtils.cleanDB();
     }
 
     @Test
     void successVerifyFirstUser() {
         var verificationPage = new LoginPage()
                 .Login(authInfoUser1);
-        verificationPage.verify(authInfoUser1.getLogin(), true).dashboardPageCheck();
+        verificationPage.verify(DBUtils.getVerificationCode(authInfoUser1.getLogin())).dashboardPageCheck();
     }
 
     @Test
@@ -50,21 +50,21 @@ public class UserVerifyTest {
     void failedAuthCodedFirstUser() {
         var verificationPage = new LoginPage()
                 .Login(authInfoUser1);
-        verificationPage.verify(authInfoUser1.getLogin(), false);
+        verificationPage.verify(DataHelper.getInvalidVerificationCode());
         verificationPage.checkNotificationError();
     }
 
     @Test
     void failedPasswordSecondUserBlock() {
-        new LoginPage().Login(authInfoUser2).verify(authInfoUser2.getLogin(), true).dashboardPageCheck();
+        new LoginPage().Login(authInfoUser2).verify(DBUtils.getVerificationCode(authInfoUser2.getLogin())).dashboardPageCheck();
         open("http://localhost:9999/");
-        new LoginPage().Login(authInfoUser2).verify(authInfoUser2.getLogin(), true).dashboardPageCheck();
+        new LoginPage().Login(authInfoUser2).verify(DBUtils.getVerificationCode(authInfoUser2.getLogin())).dashboardPageCheck();
         open("http://localhost:9999/");
-        new LoginPage().Login(authInfoUser2).verify(authInfoUser2.getLogin(), true).dashboardPageCheck();
+        new LoginPage().Login(authInfoUser2).verify(DBUtils.getVerificationCode(authInfoUser2.getLogin())).dashboardPageCheck();
         open("http://localhost:9999/");
         var verificationPage = new LoginPage()
                 .Login(authInfoUser2);
-        verificationPage.verify(authInfoUser2.getLogin(), true);
+        verificationPage.verify(DBUtils.getVerificationCode(authInfoUser2.getLogin()));
         verificationPage.checkNotificationError();
         new LoginPage().checkLoginPage();
     }

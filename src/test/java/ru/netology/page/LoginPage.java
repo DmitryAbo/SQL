@@ -30,19 +30,4 @@ public class LoginPage {
     public void checkLoginPage() {
         $("[data-test-id=login] input").shouldBe(Condition.visible, Duration.ofSeconds(15));
     }
-
-    @SneakyThrows
-    public boolean checkActiveClientStatus(String login) {
-        boolean isActive;
-        QueryRunner runner = new QueryRunner();
-        String usersStatusSQL = "SELECT status FROM users where login = ?";
-
-        try (
-                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/app",
-                        "app_user",
-                        "password")
-        ) {
-            return isActive = runner.query(conn, usersStatusSQL, login, new ScalarHandler<>()).equals("active");
-        }
-    }
 }
